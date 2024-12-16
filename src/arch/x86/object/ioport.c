@@ -222,7 +222,7 @@ exception_t decodeX86PortInvocation(
     word_t *buffer
 )
 {
-    exception_t ret = EXCEPTION_NONE;
+    exception_t ret;
 
     if (invLabel == X86IOPortIn8 || invLabel == X86IOPortIn16 || invLabel == X86IOPortIn32) {
         if (length < 1) {
@@ -263,7 +263,7 @@ exception_t decodeX86PortInvocation(
            passed to invokeX86PortOut. Whilst invokeX86PortOut will ignore any extra data and
            cast down to the correct word size removing the extra here is currently relied upon
            for verification */
-        uint32_t data = 0;
+        uint32_t data;
 
         switch (invLabel) {
         case X86IOPortOut8:

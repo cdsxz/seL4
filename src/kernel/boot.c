@@ -718,7 +718,7 @@ BOOT_CODE static bool_t provide_untyped_cap(
  * @param first_untyped_slot First available untyped boot info slot.
  * @return true on success, false on failure.
  */
-BOOT_CODE static bool_t create_untypeds_for_region(
+BOOT_CODE bool_t create_untypeds_for_region(
     cap_t      root_cnode_cap,
     bool_t     device_memory,
     region_t   reg,
@@ -764,10 +764,10 @@ BOOT_CODE static bool_t create_untypeds_for_region(
     return true;
 }
 
-BOOT_CODE bool_t create_untypeds(cap_t root_cnode_cap)
+BOOT_CODE bool_t create_untypeds(cap_t root_cnode_cap,
+                                 seL4_SlotPos first_untyped_slot
+                                 )
 {
-    seL4_SlotPos first_untyped_slot = ndks_boot.slot_pos_cur;
-
     paddr_t start = 0;
     for (word_t i = 0; i < ndks_boot.resv_count; i++) {
         if (start < ndks_boot.reserved[i].start) {
@@ -970,7 +970,8 @@ BOOT_CODE bool_t init_freemem(word_t n_available, const p_region_t *available,
                 /* the region overlaps with the start of the available region.
                  * trim start of the available region */
                 avail_reg[a].start = MIN(avail_reg[a].end, reserved[r].end);
-                /* do not increment reserved index here - there could be more overlapping regions */
+                reserve_region(pptr_to_paddr_reg(reserved[r]));
+                r++;
             } else {
                 assert(reserved[r].start < avail_reg[a].end);
                 /* take the first chunk of the available region and move
@@ -980,8 +981,8 @@ BOOT_CODE bool_t init_freemem(word_t n_available, const p_region_t *available,
                 insert_region(m);
                 if (avail_reg[a].end > reserved[r].end) {
                     avail_reg[a].start = reserved[r].end;
-                    /* we could increment reserved index here, but it's more consistent with the
-                     * other overlapping case if we don't */
+                    reserve_region(pptr_to_paddr_reg(reserved[r]));
+                    r++;
                 } else {
                     a++;
                 }

@@ -190,4 +190,6 @@ resolveAddressBits_ret_t resolveAddressBits(cap_t nodeCap, cptr_t capptr, word_t
             return ret;
         }
     }
+
+    UNREACHABLE();
 }

@@ -350,9 +350,6 @@ cap_t Arch_createObject(object_t t, void *regionBase, word_t userSize, bool_t de
             /** GHOSTUPD: "(True, gs_new_frames vmpage_size.ARMSmallPage
                                                     (ptr_val \<acute>regionBase)
                                                     (unat ARMSmallPageBits))" */
-            cleanCacheRange_RAM((word_t)regionBase,
-                                (word_t)regionBase + MASK(pageBitsForSize(ARMSmallPage)),
-                                addrFromPPtr(regionBase));
         }
         return cap_frame_cap_new(
                    asidInvalid,           /* capFMappedASID */
@@ -376,9 +373,6 @@ cap_t Arch_createObject(object_t t, void *regionBase, word_t userSize, bool_t de
             /** GHOSTUPD: "(True, gs_new_frames vmpage_size.ARMLargePage
                                                     (ptr_val \<acute>regionBase)
                                                     (unat ARMLargePageBits))" */
-            cleanCacheRange_RAM((word_t)regionBase,
-                                (word_t)regionBase + MASK(pageBitsForSize(ARMLargePage)),
-                                addrFromPPtr(regionBase));
         }
         return cap_frame_cap_new(
                    asidInvalid,           /* capFMappedASID */
@@ -402,9 +396,6 @@ cap_t Arch_createObject(object_t t, void *regionBase, word_t userSize, bool_t de
             /** GHOSTUPD: "(True, gs_new_frames vmpage_size.ARMHugePage
                                                     (ptr_val \<acute>regionBase)
                                                     (unat ARMHugePageBits))" */
-            cleanCacheRange_RAM((word_t)regionBase,
-                                (word_t)regionBase + MASK(pageBitsForSize(ARMHugePage)),
-                                addrFromPPtr(regionBase));
         }
         return cap_frame_cap_new(
                    asidInvalid,           /* capFMappedASID */
@@ -415,13 +406,8 @@ cap_t Arch_createObject(object_t t, void *regionBase, word_t userSize, bool_t de
                    !!deviceMemory         /* capFIsDevice */
                );
     case seL4_ARM_VSpaceObject:
-        /** AUXUPD: "(True, ptr_retyps 1
-              (Ptr (ptr_val \<acute>regionBase) :: (pte_C[vs_array_len]) ptr))" */
-        /** GHOSTUPD: "(True, gs_new_pt_t VSRootPT_T (ptr_val \<acute>regionBase))" */
-        cleanCacheRange_PoU((word_t)regionBase,
-                            (word_t)regionBase + MASK(seL4_VSpaceBits),
-                            addrFromPPtr(regionBase));
 #ifdef CONFIG_ARM_SMMU
+
         return cap_vspace_cap_new(
                    asidInvalid,           /* capVSMappedASID */
                    (word_t)regionBase,    /* capVSBasePtr    */
@@ -429,6 +415,10 @@ cap_t Arch_createObject(object_t t, void *regionBase, word_t userSize, bool_t de
                    CB_INVALID             /* capVSMappedCB   */
                );
 #else
+
+        /** AUXUPD: "(True, ptr_retyps 1
+              (Ptr (ptr_val \<acute>regionBase) :: (pte_C[vs_array_len]) ptr))" */
+        /** GHOSTUPD: "(True, gs_new_pt_t VSRootPT_T (ptr_val \<acute>regionBase))" */
         return cap_vspace_cap_new(
                    asidInvalid,           /* capVSMappedASID */
                    (word_t)regionBase,    /* capVSBasePtr    */
@@ -439,9 +429,6 @@ cap_t Arch_createObject(object_t t, void *regionBase, word_t userSize, bool_t de
         /** AUXUPD: "(True, ptr_retyps 1
               (Ptr (ptr_val \<acute>regionBase) :: (pte_C[pt_array_len]) ptr))" */
         /** GHOSTUPD: "(True, gs_new_pt_t NormalPT_T (ptr_val \<acute>regionBase))" */
-        cleanCacheRange_PoU((word_t)regionBase,
-                            (word_t)regionBase + MASK(seL4_PageTableBits),
-                            addrFromPPtr(regionBase));
         return cap_page_table_cap_new(
                    asidInvalid,           /* capPTMappedASID    */
                    (word_t)regionBase,    /* capPTBasePtr       */
