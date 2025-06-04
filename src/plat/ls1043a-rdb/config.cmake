@@ -24,13 +24,13 @@ if(KernelPlatformls1043a-rdb)
         list(APPEND KernelDTSList "src/plat/ls1043a-rdb/overlay-ls1043a-32bit.dts")
     endif()
     declare_default_headers(
-        TIMER_FREQUENCY 8000000
+        TIMER_FREQUENCY 25000000
         MAX_IRQ ${LS1043A_MAX_IRQ}
         TIMER drivers/timer/arm_generic.h
         INTERRUPT_CONTROLLER arch/machine/gic_v2.h
         NUM_PPI 32
-        CLK_MAGIC 1llu
-        CLK_SHIFT 3u
+        CLK_MAGIC 1441151881llu
+        CLK_SHIFT 55u
         KERNEL_WCET 10u
     )
 endif()
